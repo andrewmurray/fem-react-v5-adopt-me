@@ -6,16 +6,18 @@ import Results from "./Results";
 import pet, { ANIMALS } from "@frontendmasters/pet";
 
 import ThemeContext from "./ThemeContext";
+import SearchContext from "./SearchContext";
 
 export default function SearchParams() {
+  const [theme, setTheme] = useContext(ThemeContext);
+  const [search, setSearch] = useContext(SearchContext);
+
   const [location, setLocation] = useState("Seattle, WA");
 
   const [breeds, setBreeds] = useState([]);
 
   const [animal, AnimalDropdown] = useDropdown("Animal", "dog", ANIMALS);
   const [breed, BreedDropdown, setBreed] = useDropdown("Breed", "", breeds);
-  const [pets, setPets] = useState([]);
-  const [theme, setTheme] = useContext(ThemeContext);
 
   async function requestPets() {
     const { animals } = await pet.animals({
@@ -24,7 +26,7 @@ export default function SearchParams() {
       type: animal
     });
 
-    setPets(animals || []);
+    setSearch({ ...search, results: animals || [] });
   }
 
   useEffect(() => {
@@ -75,7 +77,7 @@ export default function SearchParams() {
         </label>
         <button style={{ backgroundColor: theme }}>Submit</button>
       </form>
-      <Results pets={pets} />
+      <Results pets={search.results} />
     </div>
   );
 }
