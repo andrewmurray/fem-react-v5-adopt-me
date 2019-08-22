@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext } from "react";
 import useDropdown from "./useDropdown";
 import Results from "./Results";
 
-import pet, { ANIMALS } from "@frontendmasters/pet";
+import pet from "@frontendmasters/pet";
 
 import ThemeContext from "./ThemeContext";
 import SearchContext from "./SearchContext";
@@ -12,16 +12,14 @@ export default function SearchParams() {
   const [theme, setTheme] = useContext(ThemeContext);
   const [search, setSearch] = useContext(SearchContext);
 
-  const [location, setLocation] = useState("Seattle, WA");
-
   const [breeds, setBreeds] = useState([]);
 
-  const [animal, AnimalDropdown] = useDropdown("Animal", "dog", ANIMALS);
+  const [animal, AnimalDropdown] = useDropdown("Animal", "dog", search.species);
   const [breed, BreedDropdown, setBreed] = useDropdown("Breed", "", breeds);
 
   async function requestPets() {
     const { animals } = await pet.animals({
-      location,
+      location: search.location,
       breed,
       type: animal
     });
@@ -54,9 +52,9 @@ export default function SearchParams() {
           <input
             type="text"
             id="location"
-            value={location}
+            value={search.location}
             placeholder="location"
-            onChange={e => setLocation(e.target.value)}
+            onChange={e => setSearch({ ...search, location: e.target.value })}
           />
         </label>
         <AnimalDropdown />
